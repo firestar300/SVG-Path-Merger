@@ -2,6 +2,10 @@
 
 A simple and elegant web application to merge all `<path>` elements from an SVG into a single path.
 
+## 🌐 Live Demo
+
+**[Try it online](https://firestar300.github.io/SVG-Path-Merger/)** 🚀
+
 ## 🎯 Features
 
 - **Automatic merging**: Combines all `<path>` elements from an SVG into a single path
@@ -50,6 +54,19 @@ npm run preview
 2. The application will automatically merge all `<path>` elements
 3. The result will appear in the right field
 4. Click "Copy" to copy the merged SVG
+
+## 🚀 Deployment
+
+The application is automatically deployed to GitHub Pages via GitHub Actions on every push to the `main` branch.
+
+### Manual Deployment
+
+```bash
+# Build for production
+npm run build
+
+# The dist/ folder contains the production-ready files
+```
 
 ## 💡 Example
 
