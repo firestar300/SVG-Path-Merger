@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .preview-checkerboard {
+    background: repeating-conic-gradient(#f1f5f9 0% 25%, transparent 0% 50%) 50% / 20px 20px;
+  }
+
+  .btn {
+    @apply inline-flex items-center gap-2 px-5 py-2.5 border-0 rounded-lg text-sm font-medium cursor-pointer transition-all shadow-custom;
+  }
+
+  .btn:hover {
+    @apply -translate-y-0.5 shadow-custom-lg;
+  }
+
+  .btn:active {
+    @apply translate-y-0;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-primary-hover;
+  }
+
+  .btn-secondary {
+    @apply bg-slate-600 text-white hover:bg-slate-700;
+  }
+}
