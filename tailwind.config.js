@@ -6,6 +6,12 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Avenir', 'Montserrat', 'Corbel', 'URW Gothic', 'source-sans-pro', 'sans-serif'],
+      },
+      fontWeight: {
+        normal: '400',
+      },
       colors: {
         primary: {
           DEFAULT: '#6366f1',

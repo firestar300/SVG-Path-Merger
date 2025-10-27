@@ -174,10 +174,11 @@ function formatSvg(svgCode) {
         const serializer = new XMLSerializer();
         let formatted = serializer.serializeToString(doc);
 
-        // Add basic indentation
+        // Format with proper indentation and remove extra spaces
         formatted = formatted
-            .replace(/></g, '>\n<')
-            .replace(/(\s+)/g, ' ')
+            .replace(/></g, '>\n<')           // Add line breaks between tags
+            .replace(/\n\s+\n/g, '\n')        // Remove empty lines
+            .replace(/>\s+</g, '><')          // Remove spaces between tags
             .trim();
 
         return formatted;
