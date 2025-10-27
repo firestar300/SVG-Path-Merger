@@ -10,14 +10,19 @@ const outputStats = document.getElementById('outputStats');
 const copyBtn = document.getElementById('copyBtn');
 const clearBtn = document.getElementById('clearBtn');
 const toast = document.getElementById('toast');
+const darkModeToggle = document.getElementById('darkModeToggle');
 
 // Event Listeners
 inputSvg.addEventListener('input', handleInput);
 copyBtn.addEventListener('click', copyToClipboard);
 clearBtn.addEventListener('click', clearInput);
+darkModeToggle.addEventListener('click', toggleDarkMode);
 
 // Load example on page load (optional)
 window.addEventListener('DOMContentLoaded', () => {
+    // Initialize dark mode
+    initDarkMode();
+
     const exampleSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100">
   <path d="M 10 10 L 30 10 L 30 30 L 10 30 Z" fill="#4f46e5"/>
   <path d="M 40 10 L 60 10 L 60 30 L 40 30 Z" fill="#6366f1"/>
@@ -252,7 +257,7 @@ function calculateReduction() {
  */
 function resetOutput() {
     outputSvg.value = '';
-    outputPreview.innerHTML = '<div class="text-slate-500 italic text-center p-8">Preview will appear here</div>';
+    outputPreview.innerHTML = '<div class="text-slate-500 dark:text-slate-400 italic text-center p-8">Preview will appear here</div>';
     outputStats.innerHTML = '';
     inputStats.innerHTML = '';
 }
@@ -281,7 +286,7 @@ async function copyToClipboard() {
  */
 function clearInput() {
     inputSvg.value = '';
-    inputPreview.innerHTML = '<div class="text-slate-500 italic text-center p-8">Preview will appear here</div>';
+    inputPreview.innerHTML = '<div class="text-slate-500 dark:text-slate-400 italic text-center p-8">Preview will appear here</div>';
     resetOutput();
 }
 
@@ -293,7 +298,7 @@ function clearInput() {
 function showToast(message, type = 'success') {
     toast.textContent = message;
     toast.className = `fixed bottom-8 right-8 px-6 py-4 rounded-lg shadow-custom-lg font-medium transition-all duration-300 ${
-        type === 'error' ? 'bg-red-500' : 'bg-green-500'
+        type === 'error' ? 'bg-red-500 dark:bg-red-600' : 'bg-green-500 dark:bg-green-600'
     } text-white opacity-0 translate-y-4 pointer-events-none`;
 
     // Trigger reflow to restart animation
@@ -306,4 +311,27 @@ function showToast(message, type = 'success') {
         toast.classList.add('opacity-0', 'translate-y-4');
         toast.classList.remove('opacity-100', 'translate-y-0');
     }, 3000);
+}
+
+/**
+ * Initializes dark mode based on user preference or system settings
+ */
+function initDarkMode() {
+    // Check for saved user preference, otherwise check system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+    }
+}
+
+/**
+ * Toggles dark mode
+ */
+function toggleDarkMode() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
 }
