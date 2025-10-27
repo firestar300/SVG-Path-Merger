@@ -11,6 +11,18 @@
     background: repeating-conic-gradient(rgb(15 23 42) 0% 25%, transparent 0% 50%) 50% / 20px 20px;
   }
 
+  .preview-white {
+    background: #ffffff;
+  }
+
+  .preview-black {
+    background: #000000;
+  }
+
+  .preview-gray {
+    background: #6b7280;
+  }
+
   .btn {
     @apply inline-flex items-center gap-2 px-5 py-2.5 border-0 rounded-lg text-sm font-medium cursor-pointer transition-all shadow-custom;
   }

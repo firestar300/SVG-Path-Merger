@@ -11,12 +11,19 @@ const copyBtn = document.getElementById('copyBtn');
 const clearBtn = document.getElementById('clearBtn');
 const toast = document.getElementById('toast');
 const darkModeToggle = document.getElementById('darkModeToggle');
+const inputBgToggle = document.getElementById('inputBgToggle');
+const outputBgToggle = document.getElementById('outputBgToggle');
+
+// Background options
+const bgOptions = ['transparent', 'white', 'black', 'gray'];
 
 // Event Listeners
 inputSvg.addEventListener('input', handleInput);
 copyBtn.addEventListener('click', copyToClipboard);
 clearBtn.addEventListener('click', clearInput);
 darkModeToggle.addEventListener('click', toggleDarkMode);
+inputBgToggle.addEventListener('click', () => togglePreviewBackground(inputPreview));
+outputBgToggle.addEventListener('click', () => togglePreviewBackground(outputPreview));
 
 // Load example on page load (optional)
 window.addEventListener('DOMContentLoaded', () => {
@@ -141,8 +148,9 @@ function mergePaths(svgElement, paths) {
     if (stroke) newPath.setAttribute('stroke', stroke);
     if (strokeWidth) newPath.setAttribute('stroke-width', strokeWidth);
 
-    // If no fill is specified, set a default
-    if (!fill && !stroke) {
+    // Only add a default fill if the SVG parent doesn't have one and path has neither fill nor stroke
+    const svgFill = svgElement.getAttribute('fill');
+    if (!fill && !stroke && !svgFill) {
         newPath.setAttribute('fill', 'currentColor');
     }
 
@@ -198,6 +206,9 @@ function formatSvg(svgCode) {
  * @param {string} svgCode - The SVG code to display
  */
 function displayPreview(container, svgCode) {
+    // Store current background setting
+    const currentBg = container.getAttribute('data-bg') || 'transparent';
+
     container.innerHTML = svgCode;
 
     // Ensure SVG scales properly
@@ -208,6 +219,9 @@ function displayPreview(container, svgCode) {
         svg.style.height = 'auto';
         svg.style.width = 'auto';
     }
+
+    // Reapply background setting
+    applyPreviewBackground(container, currentBg);
 }
 
 /**
@@ -240,13 +254,13 @@ function calculateReduction() {
     const inputSize = new Blob([inputSvg.value]).size;
     const outputSize = new Blob([outputSvg.value]).size;
     const reduction = ((1 - outputSize / inputSize) * 100).toFixed(1);
-    const color = reduction > 0 ? '#22c55e' : '#ef4444';
+    const color = parseInt(reduction) === 0 ? 'inherit' : parseInt(reduction) > 0 ? '#22c55e' : '#ef4444';
 
     return `
         <div class="flex justify-between">
             <span>Reduction:</span>
             <strong style="color: ${color}">
-                ${reduction > 0 ? '-' : '+'}${Math.abs(reduction)}%
+                ${parseInt(reduction) > 0 ? '-' : '+'}${Math.abs(parseInt(reduction))}%
             </strong>
         </div>
     `;
@@ -256,8 +270,10 @@ function calculateReduction() {
  * Resets the output
  */
 function resetOutput() {
+    const currentBg = outputPreview.getAttribute('data-bg') || 'transparent';
     outputSvg.value = '';
     outputPreview.innerHTML = '<div class="text-slate-500 dark:text-slate-400 italic text-center p-8">Preview will appear here</div>';
+    applyPreviewBackground(outputPreview, currentBg);
     outputStats.innerHTML = '';
     inputStats.innerHTML = '';
 }
@@ -285,8 +301,10 @@ async function copyToClipboard() {
  * Clears the input
  */
 function clearInput() {
+    const currentBg = inputPreview.getAttribute('data-bg') || 'transparent';
     inputSvg.value = '';
     inputPreview.innerHTML = '<div class="text-slate-500 dark:text-slate-400 italic text-center p-8">Preview will appear here</div>';
+    applyPreviewBackground(inputPreview, currentBg);
     resetOutput();
 }
 
@@ -334,4 +352,44 @@ function initDarkMode() {
 function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+/**
+ * Toggles preview background through different options
+ * @param {HTMLElement} previewElement - The preview element to change
+ */
+function togglePreviewBackground(previewElement) {
+    const currentBg = previewElement.getAttribute('data-bg');
+    const currentIndex = bgOptions.indexOf(currentBg);
+    const nextIndex = (currentIndex + 1) % bgOptions.length;
+    const nextBg = bgOptions[nextIndex];
+
+    previewElement.setAttribute('data-bg', nextBg);
+    applyPreviewBackground(previewElement, nextBg);
+}
+
+/**
+ * Applies background style to preview element
+ * @param {HTMLElement} previewElement - The preview element
+ * @param {string} bgType - The background type
+ */
+function applyPreviewBackground(previewElement, bgType) {
+    // Remove all background classes
+    previewElement.classList.remove('preview-checkerboard', 'preview-white', 'preview-black', 'preview-gray');
+
+    // Apply the appropriate background class
+    switch (bgType) {
+        case 'transparent':
+            previewElement.classList.add('preview-checkerboard');
+            break;
+        case 'white':
+            previewElement.classList.add('preview-white');
+            break;
+        case 'black':
+            previewElement.classList.add('preview-black');
+            break;
+        case 'gray':
+            previewElement.classList.add('preview-gray');
+            break;
+    }
 }
