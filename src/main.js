@@ -148,12 +148,6 @@ function mergePaths(svgElement, paths) {
     if (stroke) newPath.setAttribute('stroke', stroke);
     if (strokeWidth) newPath.setAttribute('stroke-width', strokeWidth);
 
-    // Only add a default fill if the SVG parent doesn't have one and path has neither fill nor stroke
-    const svgFill = svgElement.getAttribute('fill');
-    if (!fill && !stroke && !svgFill) {
-        newPath.setAttribute('fill', 'currentColor');
-    }
-
     // Append the new path to the SVG
     clonedSvg.appendChild(newPath);
 
