@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://firestar300.github.io/SVG-Path-Merger/sitemap.xml
