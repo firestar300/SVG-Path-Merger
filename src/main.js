@@ -214,7 +214,14 @@ function handleInput() {
         });
 
         // Merge paths
-        const mergedSvg = mergePaths(svgElement, paths);
+        const mergeResult = mergePaths(svgElement, paths);
+        const mergedSvg = mergeResult.svg;
+
+        // Show warnings if any colors are lost
+        if (mergeResult.warnings.length > 0) {
+            const warningMessage = '⚠️ Note: ' + mergeResult.warnings.join(' ');
+            showToast(warningMessage, 'warning');
+        }
 
         // Display output
         outputSvg.value = formatSvg(mergedSvg);
@@ -236,19 +243,26 @@ function handleInput() {
  * Merges all path elements into a single path
  * @param {SVGElement} svgElement - The SVG element
  * @param {NodeList} paths - Collection of path elements
- * @returns {string} - The merged SVG string
+ * @returns {Object} - Object containing merged SVG string and warnings
  */
 function mergePaths(svgElement, paths) {
     // Clone the SVG element
     const clonedSvg = svgElement.cloneNode(true);
 
-    // Collect all path data
+    // Collect all path data and check for different colors
     const pathDataArray = [];
-    const transforms = [];
+    const fills = new Set();
+    const strokes = new Set();
+    const warnings = [];
 
     paths.forEach(path => {
         const d = path.getAttribute('d');
         const transform = path.getAttribute('transform');
+        const fill = path.getAttribute('fill') || 'none';
+        const stroke = path.getAttribute('stroke') || 'none';
+
+        if (fill !== 'none') fills.add(fill);
+        if (stroke !== 'none') strokes.add(stroke);
 
         if (d) {
             // If path has a transform, we need to apply it
@@ -259,6 +273,14 @@ function mergePaths(svgElement, paths) {
             }
         }
     });
+
+    // Check if there are multiple colors
+    if (fills.size > 1) {
+        warnings.push(`Multiple fill colors detected (${fills.size} different colors). All paths will use the first color found.`);
+    }
+    if (strokes.size > 1) {
+        warnings.push(`Multiple stroke colors detected (${strokes.size} different colors). All paths will use the first stroke found.`);
+    }
 
     // Combine all path data
     const mergedPathData = pathDataArray.join(' ');
@@ -275,16 +297,24 @@ function mergePaths(svgElement, paths) {
     const fill = firstPath.getAttribute('fill');
     const stroke = firstPath.getAttribute('stroke');
     const strokeWidth = firstPath.getAttribute('stroke-width');
+    const fillRule = firstPath.getAttribute('fill-rule');
 
     if (fill) newPath.setAttribute('fill', fill);
     if (stroke) newPath.setAttribute('stroke', stroke);
     if (strokeWidth) newPath.setAttribute('stroke-width', strokeWidth);
 
+    // Set fill-rule to evenodd to handle overlapping paths correctly
+    // This allows overlapping shapes to create visual cutouts
+    newPath.setAttribute('fill-rule', fillRule || 'evenodd');
+
     // Append the new path to the SVG
     clonedSvg.appendChild(newPath);
 
-    // Return the serialized SVG
-    return new XMLSerializer().serializeToString(clonedSvg);
+    // Return the serialized SVG and warnings
+    return {
+        svg: new XMLSerializer().serializeToString(clonedSvg),
+        warnings: warnings
+    };
 }
 
 /**
@@ -603,14 +633,17 @@ function clearInput() {
 function showToast(message, type = 'success') {
     toast.textContent = message;
 
-    let bgColor = 'bg-green-500 dark:bg-green-600'; // success
+    let bgColor = 'bg-green-700 dark:bg-green-900'; // success
+    let textColor = 'text-white'; // default white text
+
     if (type === 'error') {
-        bgColor = 'bg-red-500 dark:bg-red-600';
+        bgColor = 'bg-red-700 dark:bg-red-900';
     } else if (type === 'warning') {
-        bgColor = 'bg-yellow-500 dark:bg-yellow-600';
+        bgColor = 'bg-yellow-50 dark:bg-yellow-900';
+        textColor = 'text-slate-900 dark:text-slate-200'; // dark text for better contrast
     }
 
-    toast.className = `fixed bottom-8 right-8 px-6 py-4 rounded-lg shadow-custom-lg font-medium transition-all duration-300 ${bgColor} text-white opacity-0 translate-y-4 pointer-events-none`;
+    toast.className = `fixed bottom-8 right-8 px-6 py-4 rounded-lg shadow-custom-lg font-medium transition-all duration-300 ${bgColor} ${textColor} opacity-0 translate-y-4 pointer-events-none`;
 
     // Trigger reflow to restart animation
     void toast.offsetWidth;
