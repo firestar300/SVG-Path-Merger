@@ -1,0 +1,27 @@
+{
+  "name": "SVG Path Merger",
+  "short_name": "Path Merger",
+  "description": "Merge SVG paths online - Free tool to combine multiple SVG path elements into a single path",
+  "icons": [
+    {
+      "src": "/SVG-Path-Merger/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/SVG-Path-Merger/favicon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/SVG-Path-Merger/favicon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#6366f1",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "start_url": "/SVG-Path-Merger/"
+}
