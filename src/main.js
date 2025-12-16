@@ -253,6 +253,7 @@ function mergePaths(svgElement, paths) {
     const pathDataArray = [];
     const fills = new Set();
     const strokes = new Set();
+    const fillRules = new Set();
     const warnings = [];
 
     paths.forEach(path => {
@@ -260,9 +261,11 @@ function mergePaths(svgElement, paths) {
         const transform = path.getAttribute('transform');
         const fill = path.getAttribute('fill') || 'none';
         const stroke = path.getAttribute('stroke') || 'none';
+        const fillRule = path.getAttribute('fill-rule');
 
         if (fill !== 'none') fills.add(fill);
         if (stroke !== 'none') strokes.add(stroke);
+        if (fillRule) fillRules.add(fillRule);
 
         if (d) {
             // If path has a transform, we need to apply it
@@ -297,15 +300,16 @@ function mergePaths(svgElement, paths) {
     const fill = firstPath.getAttribute('fill');
     const stroke = firstPath.getAttribute('stroke');
     const strokeWidth = firstPath.getAttribute('stroke-width');
-    const fillRule = firstPath.getAttribute('fill-rule');
 
     if (fill) newPath.setAttribute('fill', fill);
     if (stroke) newPath.setAttribute('stroke', stroke);
     if (strokeWidth) newPath.setAttribute('stroke-width', strokeWidth);
 
-    // Set fill-rule to evenodd to handle overlapping paths correctly
-    // This allows overlapping shapes to create visual cutouts
-    newPath.setAttribute('fill-rule', fillRule || 'evenodd');
+    // Only set fill-rule if it was defined in at least one input path
+    if (fillRules.size > 0) {
+        // Use the first fill-rule found
+        newPath.setAttribute('fill-rule', [...fillRules][0]);
+    }
 
     // Append the new path to the SVG
     clonedSvg.appendChild(newPath);
