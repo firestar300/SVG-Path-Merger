@@ -470,7 +470,7 @@ function displayPreview(container, svgCode) {
     } catch (error) {
         console.error('Error displaying preview:', error);
         const errorDiv = document.createElement('div');
-        errorDiv.className = 'text-red-500 dark:text-red-400 text-center p-8';
+        errorDiv.className = 'text-red-800 dark:text-red-300 text-center p-8';
         errorDiv.textContent = 'Error displaying preview';
         container.appendChild(errorDiv);
     }
@@ -542,7 +542,6 @@ function calculateReductionElement() {
     const outputSize = new Blob([outputSvg.value]).size;
     const reduction = ((1 - outputSize / inputSize) * 100).toFixed(1);
     const reductionNum = parseInt(reduction);
-    const color = reductionNum === 0 ? 'inherit' : reductionNum > 0 ? '#22c55e' : '#ef4444';
 
     // Create reduction info element
     const reductionDiv = document.createElement('div');
@@ -552,7 +551,12 @@ function calculateReductionElement() {
     reductionLabel.textContent = 'Reduction:';
 
     const reductionValue = document.createElement('strong');
-    reductionValue.style.color = color;
+    reductionValue.className =
+        reductionNum === 0
+            ? 'stat-reduction-value--neutral'
+            : reductionNum > 0
+              ? 'stat-reduction-value--good'
+              : 'stat-reduction-value--bad';
     reductionValue.textContent = `${reductionNum > 0 ? '-' : '+'}${Math.abs(reductionNum)}%`;
 
     reductionDiv.appendChild(reductionLabel);
@@ -643,8 +647,8 @@ function showToast(message, type = 'success') {
     if (type === 'error') {
         bgColor = 'bg-red-700 dark:bg-red-900';
     } else if (type === 'warning') {
-        bgColor = 'bg-yellow-50 dark:bg-yellow-900';
-        textColor = 'text-slate-900 dark:text-slate-200'; // dark text for better contrast
+        bgColor = 'bg-amber-100 dark:bg-amber-950';
+        textColor = 'text-amber-950 dark:text-amber-100';
     }
 
     toast.className = `fixed bottom-8 right-8 px-6 py-4 rounded-lg shadow-custom-lg font-medium transition-all duration-300 ${bgColor} ${textColor} opacity-0 translate-y-4 pointer-events-none`;

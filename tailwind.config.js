@@ -15,8 +15,8 @@ export default {
       },
       colors: {
         primary: {
-          DEFAULT: '#6366f1',
-          hover: '#4f46e5',
+          DEFAULT: '#4f46e5',
+          hover: '#4338ca',
         },
       },
       boxShadow: {

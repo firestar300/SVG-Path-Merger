@@ -25,6 +25,7 @@
 
   .btn {
     @apply inline-flex items-center gap-2 px-5 py-2.5 border-0 rounded-lg text-sm font-medium cursor-pointer transition-all shadow-custom;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-50 dark:focus-visible:ring-offset-slate-900;
   }
 
   .btn:hover {
@@ -36,10 +37,25 @@
   }
 
   .btn-primary {
-    @apply bg-primary dark:bg-indigo-500 text-white hover:bg-primary-hover dark:hover:bg-indigo-600;
+    @apply bg-primary dark:bg-indigo-700 text-white hover:bg-primary-hover dark:hover:bg-indigo-800;
+    @apply focus-visible:ring-indigo-700 dark:focus-visible:ring-indigo-300;
+  }
+
+  /* Stats reduction (WCAG contrast on slate-50 / slate-900) */
+  .stat-reduction-value--good {
+    @apply text-emerald-800 dark:text-emerald-300;
+  }
+
+  .stat-reduction-value--bad {
+    @apply text-red-800 dark:text-red-300;
+  }
+
+  .stat-reduction-value--neutral {
+    @apply text-slate-800 dark:text-slate-200;
   }
 
   .btn-secondary {
     @apply bg-slate-600 dark:bg-slate-700 text-white hover:bg-slate-700 dark:hover:bg-slate-600;
+    @apply focus-visible:ring-slate-600 dark:focus-visible:ring-slate-400;
   }
 }
